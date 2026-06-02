@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 10 Biology Quiz — Al-Faisaliya Schools</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2530;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --green: #3fb950;
+    --green-bg: rgba(63,185,80,0.12);
+    --red: #f85149;
+    --red-bg: rgba(248,81,73,0.12);
+    --lv1: #58a6ff;
+    --lv1-bg: rgba(88,166,255,0.12);
+    --lv2: #3fb950;
+    --lv2-bg: rgba(63,185,80,0.12);
+    --lv3: #d29922;
+    --lv3-bg: rgba(210,153,34,0.12);
+    --lv4: #f85149;
+    --lv4-bg: rgba(248,81,73,0.12);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* Stars bg effect */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 10%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 60%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /* Header */
+  .site-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.6s ease both;
+  }
+  .site-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 40px);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .site-header h1 span { color: var(--lv1); }
+  .site-header p { font-size: 13px; color: var(--text2); }
+
+  /* Screens */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeUp 0.4s ease both; }
+
+  /* Home level cards */
+  .level-grid { display: flex; flex-direction: column; gap: 12px; }
+
+  .level-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .level-card:nth-child(1) { animation-delay: 0.05s; }
+  .level-card:nth-child(2) { animation-delay: 0.1s; }
+  .level-card:nth-child(3) { animation-delay: 0.15s; }
+  .level-card:nth-child(4) { animation-delay: 0.2s; }
+  .level-card:hover { background: var(--surface2); border-color: var(--border2); transform: translateY(-2px); }
+  .level-card:active { transform: translateY(0); }
+
+  .level-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  .icon-lv1 { background: var(--lv1-bg); }
+  .icon-lv2 { background: var(--lv2-bg); }
+  .icon-lv3 { background: var(--lv3-bg); }
+  .icon-lv4 { background: var(--lv4-bg); }
+
+  .level-meta h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+  .level-meta p { font-size: 12px; color: var(--text2); }
+  .level-arrow { margin-left: auto; color: var(--text2); font-size: 20px; flex-shrink: 0; }
+
+  .diff-pill {
+    margin-left: auto;
+    margin-right: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .d1 { background: var(--lv1-bg); color: var(--lv1); }
+  .d2 { background: var(--lv2-bg); color: var(--lv2); }
+  .d3 { background: var(--lv3-bg); color: var(--lv3); }
+  .d4 { background: var(--lv4-bg); color: var(--lv4); }
+
+  /* Quiz screen */
+  .quiz-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .back-btn:hover { border-color: var(--border2); color: var(--text); }
+
+  .score-pill {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .score-pill b { color: var(--text); }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .pf-lv1 { background: var(--lv1); }
+  .pf-lv2 { background: var(--lv2); }
+  .pf-lv3 { background: var(--lv3); }
+  .pf-lv4 { background: var(--lv4); }
+
+  .q-meta { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(17px, 3vw, 21px);
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+  }
+  .opt:hover:not(:disabled) { background: var(--surface2); border-color: var(--border2); transform: translateX(3px); }
+  .opt:disabled { cursor: default; }
+  .opt-letter {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    color: var(--text2);
+    transition: background 0.2s, color 0.2s;
+  }
+  .opt.correct { background: var(--green-bg); border-color: var(--green); }
+  .opt.correct .opt-letter { background: var(--green); color: #0d1117; }
+  .opt.wrong { background: var(--red-bg); border-color: var(--red); }
+  .opt.wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt.reveal { background: var(--green-bg); border-color: var(--green); }
+  .opt.reveal .opt-letter { background: var(--green); color: #0d1117; }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+  }
+  .fb-correct { background: var(--green-bg); border: 1px solid var(--green); color: #3fb950; }
+  .fb-wrong { background: var(--red-bg); border: 1px solid var(--red); color: #f85149; }
+  .fb-wrong strong { color: var(--text); }
+
+  .next-btn {
+    margin-top: 1.25rem;
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: none;
+    letter-spacing: 0.3px;
+  }
+  .next-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.25); }
+
+  /* Result screen */
+  .result-header { text-align: center; margin-bottom: 1.5rem; }
+  .result-emoji { font-size: 56px; display: block; margin-bottom: 10px; }
+  .result-title { font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400; margin-bottom: 6px; }
+  .result-sub { font-size: 14px; color: var(--text2); }
+
+  .score-display {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .big-num { font-family: 'DM Serif Display', serif; font-size: 72px; font-weight: 400; line-height: 1; }
+  .big-denom { font-size: 32px; color: var(--text2); }
+  .score-pct { font-size: 14px; color: var(--text2); margin-top: 8px; }
+
+  .breakdown {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .breakdown-title {
+    padding: 12px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bk-row {
+    display: flex;
+    align-items: center;
+    padding: 11px 18px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+  }
+  .bk-row:last-child { border-bottom: none; }
+  .bk-num { color: var(--text2); font-size: 11px; min-width: 24px; }
+  .bk-q { flex: 1; color: var(--text2); }
+  .bk-icon { font-size: 16px; }
+
+  .result-actions { display: flex; flex-direction: column; gap: 10px; }
+  .act-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    transition: background 0.15s;
+  }
+  .act-primary { background: var(--surface2); color: var(--text); }
+  .act-primary:hover { background: rgba(255,255,255,0.07); }
+  .act-secondary { background: none; color: var(--text2); }
+  .act-secondary:hover { background: var(--surface); }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Footer */
+  .site-footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 12px;
+    color: var(--text2);
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="site-header">
+    <h1>Grade 10 <span>Biology</span> Quiz</h1>
+    <p>Al-Faisaliya Private Schools · Jeddah · International Track</p>
+  </header>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="level-grid">
+      <div class="level-card" onclick="startLevel(0)">
+        <div class="level-icon icon-lv1">🧬</div>
+        <div class="level-meta">
+          <h3>Molecular Genetics</h3>
+          <p>DNA structure · replication · transcription · translation</p>
+        </div>
+        <span class="diff-pill d1">Easy</span>
+        <span class="level-arrow">›</span>
+      </div>
+      <div class="level-card" onclick="startLevel(1)">
+        <div class="level-icon icon-lv2">🔬</div>
+        <div class="level-meta">
+          <h3>Biotechnology</h3>
+          <p>PCR · gel electrophoresis · gene therapy · GMOs</p>
+        </div>
+        <span class="diff-pill d2">Medium</span>
+        <span class="level-arrow">›</span>
+      </div>
+      <div class="level-card" onclick="startLevel(2)">
+        <div class="level-icon icon-lv3">🦕</div>
+        <div class="level-meta">
+          <h3>History of Life</h3>
+          <p>Fossils · geological eras · evolution · dating</p>
+        </div>
+        <span class="diff-pill d3">Hard</span>
+        <span class="level-arrow">›</span>
+      </div>
+      <div class="level-card" onclick="startLevel(3)">
+        <div class="level-icon icon-lv4">🌿</div>
+        <div class="level-meta">
+          <h3>Organizing Life's Diversity</h3>
+          <p>Taxonomy · cladistics · kingdoms · binomial nomenclature</p>
+        </div>
+        <span class="diff-pill d4">Hardest</span>
+        <span class="level-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="screen">
+    <div class="quiz-topbar">
+      <button class="back-btn" onclick="showHome()">← Levels</button>
+      <div class="score-pill">Score: <b id="live-score">0</b></div>
+    </div>
+    <div class="progress-track">
+      <div id="prog-fill" class="progress-fill pf-lv1" style="width:0%"></div>
+    </div>
+    <p class="q-meta" id="q-meta">Question 1 of 10 · Level 1</p>
+    <p class="q-text" id="q-text"></p>
+    <div class="options" id="opts"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="screen">
+    <div class="result-header">
+      <span class="result-emoji" id="result-emoji">🎉</span>
+      <h2 class="result-title" id="result-title">Level Complete!</h2>
+      <p class="result-sub" id="result-sub"></p>
+    </div>
+    <div class="score-display">
+      <div><span class="big-num" id="res-score">8</span><span class="big-denom" id="res-total">/10</span></div>
+      <div class="score-pct" id="res-pct">80% correct</div>
+    </div>
+    <div class="breakdown">
+      <div class="breakdown-title">Question Breakdown</div>
+      <div id="breakdown-rows"></div>
+    </div>
+    <div class="result-actions">
+      <button class="act-btn act-primary" onclick="retryLevel()">Retry this level</button>
+      <button class="act-btn act-secondary" onclick="showHome()">← Back to all levels</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Grade 10 Biology · Final Revision · 2025–2026</p>
+</footer>
+
+<script>
+const LEVELS = [
+  { name: "Molecular Genetics", pfClass: "pf-lv1" },
+  { name: "Biotechnology", pfClass: "pf-lv2" },
+  { name: "History of Life", pfClass: "pf-lv3" },
+  { name: "Organizing Life's Diversity", pfClass: "pf-lv4" }
+];
+
+const ALL_Q = [
+  [
+    { q:"Which scientists are credited with discovering the double-helix shape of DNA?", opts:["Hershey and Chase","Watson and Crick","Franklin and Wilkins","Beadle and Tatum"], ans:1 },
+    { q:"What is the function of DNA polymerase during replication?", opts:["Unwinds the double helix","Breaks hydrogen bonds","Bonds nucleotides to the new strand","Transcribes DNA to mRNA"], ans:2 },
+    { q:"Which nitrogenous base is found ONLY in RNA?", opts:["Adenine","Guanine","Thymine","Uracil"], ans:3 },
+    { q:"The central dogma of biology states that:", opts:["RNA → DNA → Protein","DNA → RNA → Protein","Protein → RNA → DNA","DNA directly → Protein"], ans:1 },
+    { q:"Substances that cause mutations in DNA are called:", opts:["Antigens","Nucleotides","Pathogens","Mutagens"], ans:3 },
+    { q:"Which enzyme unwinds the DNA double helix during replication?", opts:["Ligase","RNA polymerase","Helicase","Restriction enzyme"], ans:2 },
+    { q:"The process by which mRNA is synthesized from a DNA template is called:", opts:["Translation","Replication","Transcription","Transduction"], ans:2 },
+    { q:"Photo 51, which proved DNA is a double helix, was taken by:", opts:["James Watson","Francis Crick","Rosalind Franklin","Gregor Mendel"], ans:2 },
+    { q:"DNA replication is semiconservative because:", opts:["Only one strand is copied","Each new molecule has one old + one new strand","No enzymes are required","Both new strands are completely new"], ans:1 },
+    { q:"Which type of RNA carries amino acids to the ribosome?", opts:["mRNA","rRNA","tRNA","snRNA"], ans:2 }
+  ],
+  [
+    { q:"What is the primary purpose of genetic engineering?", opts:["To study fossils","To insert DNA of one organism into another","To clone entire animals","To sequence proteins only"], ans:1 },
+    { q:"Which tool cuts DNA at specific sequences to produce sticky or blunt ends?", opts:["DNA polymerase","Ligase","Restriction enzyme","Helicase"], ans:2 },
+    { q:"Which technique separates DNA fragments by size using an electric current?", opts:["PCR","Gene cloning","Gel electrophoresis","DNA sequencing"], ans:2 },
+    { q:"The Human Genome Project aimed to sequence approximately how many nucleotides?", opts:["3 million","30 million","300 billion","3 billion"], ans:3 },
+    { q:"What is gene therapy?", opts:["Cloning a person's genes","Using a viral vector to insert a functional gene","Sequencing the entire genome","Using PCR to amplify genes"], ans:1 },
+    { q:"The process where bacteria take up recombinant plasmid DNA via electric pulses is:", opts:["Transformation","Transduction","Translation","Transcription"], ans:0 },
+    { q:"EcoRI is an example of a:", opts:["Ligase","Restriction enzyme","Polymerase","Promoter"], ans:1 },
+    { q:"Which field creates databases to store and analyze biological information?", opts:["Pharmacogenomics","Bioinformatics","Genomics","Proteomics"], ans:1 },
+    { q:"SNPs (Single Nucleotide Polymorphisms) occur when:", opts:["Multiple nucleotides change at once","A chromosome is duplicated","A single nucleotide is altered","A gene is silenced"], ans:2 },
+    { q:"The three steps of PCR in correct order are:", opts:["Annealing → Extension → Denaturation","Denaturation → Annealing → Extension","Extension → Denaturation → Annealing","Annealing → Denaturation → Extension"], ans:1 }
+  ],
+  [
+    { q:"What was Earth like approximately 4.6 billion years ago?", opts:["Covered in ice","Full of diverse life","Liquid rock, no atmosphere, bombarded with radiation","Similar to present-day Earth"], ans:2 },
+    { q:"Which type of fossil preserves an organism in tree resin?", opts:["Mold fossil","Cast fossil","Trace fossil","Amber fossil"], ans:3 },
+    { q:"During which era did dinosaurs become extinct?", opts:["Precambrian","Paleozoic","Mesozoic","Cenozoic"], ans:2 },
+    { q:"The scientist who disproved spontaneous generation was:", opts:["Charles Darwin","Louis Pasteur","Aristotle","Miller"], ans:1 },
+    { q:"Which dating method uses radioactive potassium-40 and is used for very old rocks?", opts:["Carbon-14 dating","Relative dating","Radiometric dating","Superposition dating"], ans:2 },
+    { q:"What was the original source of atmospheric oxygen on early Earth?", opts:["Volcanoes","Autotrophs (photosynthetic organisms)","Heterotrophs","Chemical weathering"], ans:1 },
+    { q:"The Law of Superposition states that:", opts:["Older layers are above younger ones","Younger layers are below older ones","Older layers are below younger ones","All layers are the same age"], ans:2 },
+    { q:"The endosymbiont theory proposes that eukaryotes developed when:", opts:["Prokaryotes spontaneously formed organelles","Larger prokaryotes engulfed smaller ones","Viruses infected prokaryotic cells","Eukaryotes split from a common ancestor"], ans:1 },
+    { q:"Plate tectonics is the theory that:", opts:["Earth's core generates heat","Continents drift on large plates","Earthquakes create landmasses","Oceans cover most of the Earth"], ans:1 },
+    { q:"A scientist who studies ancient ecosystems and fossils is called a:", opts:["Archaeologist","Geologist","Biologist","Paleontologist"], ans:3 }
+  ],
+  [
+    { q:"Which kingdom contains organisms commonly called extremophiles?", opts:["Bacteria","Fungi","Protista","Archaea"], ans:3 },
+    { q:"What does binomial nomenclature refer to?", opts:["Classifying organisms into two kingdoms","A two-part scientific naming system","Using two languages to name organisms","Classifying by behavior only"], ans:1 },
+    { q:"The scientific discipline that classifies and names organisms is called:", opts:["Ecology","Phylogenetics","Cladistics","Taxonomy"], ans:3 },
+    { q:"Modern biological classification differs from older systems because it considers:", opts:["Only morphological features","Evolutionary relationships","Only behavioral characteristics","Habitat and diet exclusively"], ans:1 },
+    { q:"In which kingdom would you classify Euglenas?", opts:["Fungi","Archaea","Bacteria","Protista"], ans:3 },
+    { q:"Ursus americanus is an example of:", opts:["A common name","Cladistics","Binomial nomenclature","Taxonomy"], ans:2 },
+    { q:"Kingdom Fungi is characterized by organisms that are:", opts:["Autotrophic","Prokaryotic","Heterotrophic decomposers","Photosynthetic"], ans:2 },
+    { q:"What is cladistics used for?", opts:["Naming new species","Analyzing evolutionary relationships","Measuring organism size","Cataloging habitats"], ans:1 },
+    { q:"The cells of organisms in Kingdom Archaea are:", opts:["Eukaryotic","Prokaryotic","Multinucleate","Plant-like"], ans:1 },
+    { q:"The study of the evolutionary history of a species is called:", opts:["Taxonomy","Cladistics","Morphology","Phylogeny"], ans:3 }
+  ]
+];
+
+let curLevel = 0, curQ = 0, score = 0, answered = false, results = [];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showHome() { showScreen('home'); }
+
+function startLevel(lvl) {
+  curLevel = lvl; curQ = 0; score = 0; results = []; answered = false;
+  showScreen('quiz');
+  renderQ();
+}
+function retryLevel() { startLevel(curLevel); }
+
+function renderQ() {
+  const lv = LEVELS[curLevel];
+  const q = ALL_Q[curLevel][curQ];
+  const total = ALL_Q[curLevel].length;
+  answered = false;
+
+  const pf = document.getElementById('prog-fill');
+  pf.className = 'progress-fill ' + lv.pfClass;
+  pf.style.width = ((curQ / total) * 100) + '%';
+
+  document.getElementById('q-meta').textContent =
+    'Question ' + (curQ+1) + ' of ' + total + ' · Level ' + (curLevel+1) + ' — ' + lv.name;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('live-score').textContent = score;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const optsEl = document.getElementById('opts');
+  optsEl.innerHTML = '';
+  ['A','B','C','D'].forEach((letter, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="opt-letter">' + letter + '</span><span>' + q.opts[i] + '</span>';
+    btn.onclick = () => pick(i);
+    optsEl.appendChild(btn);
+  });
+}
+
+function pick(chosen) {
+  if (answered) return;
+  answered = true;
+  const q = ALL_Q[curLevel][curQ];
+  const btns = document.querySelectorAll('.opt');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (chosen === q.ans) {
+    btns[chosen].classList.add('correct');
+    fb.className = 'feedback fb-correct';
+    fb.innerHTML = '✓ Correct!';
+    score++; results.push(true);
+  } else {
+    btns[chosen].classList.add('wrong');
+    btns[q.ans].classList.add('reveal');
+    fb.className = 'feedback fb-wrong';
+    fb.innerHTML = '✗ Incorrect. The correct answer is: <strong>' + ['A','B','C','D'][q.ans] + '. ' + q.opts[q.ans] + '</strong>';
+    results.push(false);
+  }
+  fb.style.display = 'block';
+  document.getElementById('live-score').textContent = score;
+  const nb = document.getElementById('next-btn');
+  nb.textContent = curQ + 1 >= ALL_Q[curLevel].length ? 'See results →' : 'Next question →';
+  nb.style.display = 'block';
+}
+
+function nextQuestion() {
+  curQ++;
+  if (curQ >= ALL_Q[curLevel].length) showResult();
+  else renderQ();
+}
+
+function showResult() {
+  showScreen('result');
+  const total = results.length;
+  const pct = Math.round((score / total) * 100);
+  const emoji = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '💪' : '📚';
+  const title = pct >= 90 ? 'Outstanding!' : pct >= 70 ? 'Great work!' : pct >= 50 ? 'Keep going!' : 'Study more & retry!';
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = LEVELS[curLevel].name + ' · Level ' + (curLevel+1);
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-total').textContent = '/' + total;
+  document.getElementById('res-pct').textContent = pct + '% correct';
+
+  const rows = document.getElementById('breakdown-rows');
+  rows.innerHTML = '';
+  results.forEach((r, i) => {
+    const q = ALL_Q[curLevel][i];
+    const div = document.createElement('div');
+    div.className = 'bk-row';
+    div.innerHTML = '<span class="bk-num">Q' + (i+1) + '</span>' +
+      '<span class="bk-q">' + q.q.substring(0, 60) + (q.q.length > 60 ? '…' : '') + '</span>' +
+      '<span class="bk-icon">' + (r ? '✅' : '❌') + '</span>';
+    rows.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
